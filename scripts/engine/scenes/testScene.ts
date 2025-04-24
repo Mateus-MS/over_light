@@ -1,6 +1,7 @@
 import { GridMap } from "../../objects/GridMap.js";
+import { Vector } from "../../utils/Vector.js";
 import { Engine } from "../Engine.js";
-import { GridCoordinate, ScreenCoordinate } from "../type/Coordinates.js";
+import { GameCoordinate, GridCoordinate, ScreenCoordinate } from "../type/Coordinates.js";
 import { Scene } from "./Scene.js";
 
 export class TestScene extends Scene {
