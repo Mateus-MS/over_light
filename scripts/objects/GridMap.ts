@@ -2,6 +2,7 @@ import { Collisions } from "../engine/Collisions.js";
 import { Engine } from "../engine/Engine.js";
 import { GameCoordinate, GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
 import { NumberHalf } from "../engine/type/utils.js";
+import { Draw } from "../utils/Draw.js";
 import { MouseState } from "../utils/Mouse.js";
 import { Vector } from "../utils/Vector.js";
 
@@ -23,7 +24,7 @@ export class GridMap{
      * 
      * TODO: remove this from here and store it on the engine.
      */
-    public offset: ScreenCoordinate = new ScreenCoordinate(0, 0);
+    // public offset: ScreenCoordinate = new ScreenCoordinate(0, 0);
     
     protected hoveredCell: GridCoordinate | undefined = undefined;
 
@@ -32,14 +33,6 @@ export class GridMap{
         this.dimensions.calcHalf();
 
         this.size = new NumberHalf(size);
-
-        let screenSize = Engine.getInstance().SCREEN_SIZE.copy();
-        if(screenSize.half !== undefined){
-            this.offset.x = screenSize.half.x;
-            this.offset.y = screenSize.half.y;
-        } else {
-            throw new Error("Screen half size is not defined at grid map creation.");
-        }
 
         this.initiateListeners();
     }
@@ -74,7 +67,7 @@ export class GridMap{
 
         mouse.addEvent("mousemove", (event: MouseEvent) => {
             // Try to get the hovered cell position
-            this.hoveredCell = Engine.getInstance().MOUSE.position.toGridCoordinate(this.size, this.offset);
+            this.hoveredCell = Engine.getInstance().MOUSE.position.toGridCoordinate(this.size);
 
             // Try to get the action of the mouse
             if(mouse.clickTime !== undefined){
@@ -98,8 +91,9 @@ export class GridMap{
 
             // When dragging
             if(mouse.state === MouseState.Dragging){
-                this.offset.x += event.movementX;
-                this.offset.y += event.movementY;
+                let offset = Engine.getOffset()
+                offset.x += event.movementX;
+                offset.y += event.movementY;
             }
         });
     }
@@ -120,7 +114,7 @@ export class GridMap{
         let centerAsScreenCoordinate = new ScreenCoordinate(engine.SCREEN_SIZE.half.x, engine.SCREEN_SIZE.half.y);
         // Pretend to be a grid coordinate, so we can use the toGridCoordinate method.
         // This is a trick to get the center of the screen in grid coordinates.
-        let cellOnCenterOfScreen = centerAsScreenCoordinate.toGridCoordinate(this.size, this.offset);
+        let cellOnCenterOfScreen = centerAsScreenCoordinate.toGridCoordinate(this.size);
 
         // Calculate how many cells fits on half of screen on each axis.
         // TODO: This should be calculated only once, or after zooming, not every frame.
@@ -152,7 +146,7 @@ export class GridMap{
         // Render only the cells that are in the screen.
         for(let i = x.x; i <= x.y; i++){
             for(let j = y.x; j <= y.y; j++){
-                engine.DRAW.Square(
+                Draw.Square(
                     // The object style
                     {
                         position: new GridCoordinate(i, j),
@@ -167,7 +161,7 @@ export class GridMap{
                     }, 
                     // Grid parameters
                     this.size,
-                    this.offset
+                    true
                 );
             }
         }
@@ -175,7 +169,7 @@ export class GridMap{
 
     private renderHoveredCell(): void{
         if(this.hoveredCell && this.isInBounds(this.hoveredCell)){
-            Engine.getInstance().DRAW.Square(
+            Draw.Square(
                 // The object style
                 {
                     position: this.hoveredCell,
@@ -187,7 +181,7 @@ export class GridMap{
                 }, 
                 // Grid parameters
                 this.size,
-                this.offset
+                true
             );
         }
     }
@@ -196,7 +190,7 @@ export class GridMap{
         let engine = Engine.getInstance();
 
         // Draw the mouse position in different coordinate formats to test if the conversion is working.
-        engine.DRAW.Text({
+        Draw.Text({
             text: "Mouse positions: ",
             position: new ScreenCoordinate(15, engine.SCREEN_SIZE.y - 103),
             fill: { color: "black" },
@@ -220,7 +214,7 @@ export class GridMap{
             default:
                 mouseState = "Unknown";
         }
-        engine.DRAW.Text({
+        Draw.Text({
             text: `Mouse state: ${mouseState}`,
             position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 80),
             fill: { color: "black" },
@@ -230,8 +224,8 @@ export class GridMap{
         })
 
         // Draw the grid coordinate
-        let gridCoordinate = engine.MOUSE.position.toGridCoordinate(this.size, this.offset);        
-        engine.DRAW.Text({
+        let gridCoordinate = engine.MOUSE.position.toGridCoordinate(this.size);        
+        Draw.Text({
             text: `Grid coordinate: ${gridCoordinate?.x}, ${gridCoordinate?.y}`,
             position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 60),
             fill: { color: "black" },
@@ -242,9 +236,9 @@ export class GridMap{
 
         // Draw the game coordinate
         if(engine.SCREEN_SIZE.half === undefined) throw new Error("Screen half size is not defined.");
-        let gameCoordinate = engine.MOUSE.position.toGameCoordinate(this.offset);
+        let gameCoordinate = engine.MOUSE.position.toGameCoordinate();
 
-        engine.DRAW.Text({
+        Draw.Text({
             text: `Game coordinate: ${gameCoordinate?.x}, ${gameCoordinate?.y}`,
             position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 40),
             fill: { color: "black" },
@@ -255,7 +249,7 @@ export class GridMap{
 
         // Draw the screen coordinate
         let screenCoordinate = engine.MOUSE.position;
-        engine.DRAW.Text({
+        Draw.Text({
             text: `Screen coordinate: ${screenCoordinate?.x}, ${screenCoordinate?.y}`,
             position: new GameCoordinate(22, engine.SCREEN_SIZE.y - 20),
             fill: { color: "black" },

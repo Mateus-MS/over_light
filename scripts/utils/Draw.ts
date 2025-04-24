@@ -1,3 +1,4 @@
+import { Engine } from "../engine/Engine.js";
 import { GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
 import { NumberHalf } from "../engine/type/utils.js";
 import { Vector } from "../utils/Vector.js";
@@ -38,62 +39,66 @@ export interface SquareI{
 
 export class Draw{
 
-    private c: CanvasRenderingContext2D | null = null;
+    private static c: CanvasRenderingContext2D | null = null;
     private static instance: Draw | null = null;
 
-    private constructor(c: CanvasRenderingContext2D | null){
-        this.c = c;
-    }
+    private constructor(){}
 
-    /**
-     * Test if is better to pass the offset here or use another function to set it.
-     */
-    public static getInstance(c: CanvasRenderingContext2D | null): Draw{
-        if(!this.instance){
-            this.instance = new Draw(c);
+    public static getInstance(): Draw{
+        // The context needs to be setted before calling this method.
+        if(Draw.c === null){
+            throw new Error("Canvas context is null. Please provide a valid canvas context.");
+        }
+
+        if(this.instance === null){
+            this.instance = new Draw();
         }
         return this.instance;
     }
 
-    public Text(text: TextI){
-        this.c?.beginPath();
+    public static setContext(c: CanvasRenderingContext2D | null){
+        Draw.c = c;
+    }	
 
-        if(!this.c) return;
+    public static Text(text: TextI){
+        Draw.c?.beginPath();
 
-        this.c.font = `${text.fontSize}px ${text.font}`;
-        this.c.fillStyle = text.fill.color;
-        this.c.textAlign = text.aligment === undefined ? "left" : text.aligment;
-        this.c.fillText(text.text, text.position.x, text.position.y);
+        if(!Draw.c) return;
+
+        Draw.c.font = `${text.fontSize}px ${text.font}`;
+        Draw.c.fillStyle = text.fill.color;
+        Draw.c.textAlign = text.aligment === undefined ? "left" : text.aligment;
+        Draw.c.fillText(text.text, text.position.x, text.position.y);
 
         if(text.stroke){
-            this.c.strokeStyle = text.stroke.color;
-            this.c.lineWidth = text.stroke.width;
-            this.c.strokeText(text.text, text.position.x, text.position.y);
+            Draw.c.strokeStyle = text.stroke.color;
+            Draw.c.lineWidth = text.stroke.width;
+            Draw.c.strokeText(text.text, text.position.x, text.position.y);
         }
 
-        this.c?.closePath();
+        Draw.c?.closePath();
     }
 
-    public Circle(position: Vector, radius: number, color: string = "black"){
-        this.c?.beginPath();
+    public static Circle(position: Vector, radius: number, color: string = "black"){
+        Draw.c?.beginPath();
 
-        if(!this.c) return;
+        if(!Draw.c) return;
 
-        this.c.fillStyle = color;
-        this.c.arc(position.x, position.y, radius, 0, Math.PI * 2);
-        this.c.fill();
+        Draw.c.fillStyle = color;
+        Draw.c.arc(position.x, position.y, radius, 0, Math.PI * 2);
+        Draw.c.fill();
 
-        this.c.closePath();
+        Draw.c.closePath();
     }
 
     /**
      * Different from the default behavior of the canvas, when drawing a square,
      * the origin is at the center of the square. Not at the top left corner.
      */
-    public Square(square: SquareI, gridSize: NumberHalf | undefined = undefined, offset: ScreenCoordinate | undefined = undefined){
-        this.c?.beginPath();
+    public static Square(square: SquareI, gridSize: NumberHalf | undefined = undefined, useOffset: boolean = true){
+        Draw.c?.beginPath();
 
-        if(!this.c) return;
+        if(!Draw.c) return;
 
         let position: ScreenCoordinate | undefined = undefined;
 
@@ -115,22 +120,24 @@ export class Draw{
         }
 
         // If received offset, add it to the position.
-        if(offset){
+        if(useOffset){
+            let offset = Engine.getOffset();
+
             position.x += offset.x;
             position.y += offset.y;
         }
 
         // Draw logic
-        this.c.fillStyle = square.fill.color;
-        this.c.fillRect(position.x, position.y, square.size, square.size);
+        Draw.c.fillStyle = square.fill.color;
+        Draw.c.fillRect(position.x, position.y, square.size, square.size);
 
         if(square.stroke){
-            this.c.strokeStyle = square.stroke.color;
-            this.c.lineWidth = square.stroke.width;
-            this.c.strokeRect(position.x, position.y, square.size, square.size);
+            Draw.c.strokeStyle = square.stroke.color;
+            Draw.c.lineWidth = square.stroke.width;
+            Draw.c.strokeRect(position.x, position.y, square.size, square.size);
         }
 
-        this.c.closePath();
+        Draw.c.closePath();
     }
 
 }

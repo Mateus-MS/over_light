@@ -2,6 +2,7 @@ import { Entity } from "../objects/Entity.js";
 import { Draw } from "../utils/Draw.js";
 import { Mouse } from "../utils/Mouse.js";
 import { Vector } from "../utils/Vector.js";
+import { ScreenCoordinate } from "./type/Coordinates.js";
 
 export class Engine {
 
@@ -11,7 +12,6 @@ export class Engine {
     private updateLoopInterval: number | null = null;
     private c: CanvasRenderingContext2D | null = null;
 
-    public DRAW: Draw;
     public ENTITIES: Entity[] = [];
     public MOUSE: Mouse = Mouse.getInstance();
 
@@ -26,15 +26,34 @@ export class Engine {
     private frameCount: number = 0;
     private lastFPS: number = 0;
 
+    /**
+     * This is the offset of the screen. It is used to move the camera.
+     * 
+     * Each scene has its own offset. To evit the need to pass the offset to every draw method,
+     * we store in the class. BUT.
+     * 
+     * I didn't think how the multiple scenes draw order will work. So for now we gonna pretend that this is not a problem.
+     * This approach will be a problem if i decide that multiple scenes can be drawn at the same time.
+     * 
+     * for now, before draw, you can call setOffset to set the offset of the screen.
+     * and the simple way of having different scenes is to before change to a another scene, set the offset to the new scene offset.
+     * that will be "automated" when needed with a function to change scenes that will handle this.
+     */
+    private static offset: ScreenCoordinate = new ScreenCoordinate(0, 0);
+    public static setOffset(offset: ScreenCoordinate){
+        Engine.offset = offset;
+    }
+    public static getOffset(): ScreenCoordinate{
+        return Engine.offset;
+    }
+
     private constructor(){
         this.canvas = this.initCanvas();
         this.c = this.canvas.getContext("2d");
-
-        this.DRAW = Draw.getInstance(this.c);
+        Draw.setContext(this.c);
 
         this.SCREEN_SIZE.calcHalf();
     }
-
     public static getInstance(): Engine {
         if(this.instance === null){
             this.instance = new Engine();
@@ -100,7 +119,7 @@ export class Engine {
         this.c?.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         if(this.showFPS){
-            this.DRAW.Text({
+            Draw.Text({
                 text: `FPS: ${this.lastFPS}`,
                 position: this.fpsDisplayPosition,
                 fill: { 

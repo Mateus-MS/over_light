@@ -1,5 +1,6 @@
 import { GridMap } from "../../objects/GridMap.js";
-import { GridCoordinate } from "../type/Coordinates.js";
+import { Engine } from "../Engine.js";
+import { GridCoordinate, ScreenCoordinate } from "../type/Coordinates.js";
 import { Scene } from "./Scene.js";
 
 export class TestScene extends Scene {
@@ -7,9 +8,20 @@ export class TestScene extends Scene {
 
     constructor() {
         super();
+
+        // Initiate the offset to the center of the screen.
+        let screenSize = Engine.getInstance().SCREEN_SIZE.copy();
+        if(screenSize.half !== undefined){
+            this.offset.x = screenSize.half.x;
+            this.offset.y = screenSize.half.y;
+        } else {
+            throw new Error("Screen half size is not defined at grid map creation.");
+        }
     }
 
     public override Start() {
+        // When having multiple scenes this will cause a bug.
+        Engine.setOffset(this.offset);
     }
 
     public override Update() {

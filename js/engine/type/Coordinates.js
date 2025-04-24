@@ -1,12 +1,15 @@
 import { Vector } from "../../utils/Vector.js";
+import { Engine } from "../Engine.js";
 export class ScreenCoordinate extends Vector {
     constructor(x, y) {
         super(x, y);
     }
-    toGridCoordinate(gridSize, offset) {
+    toGridCoordinate(gridSize) {
+        let offset = Engine.getOffset();
         return new GridCoordinate(Math.ceil((this.x - gridSize.half - offset.x) / gridSize.number), Math.ceil((this.y - gridSize.half - offset.y) / gridSize.number));
     }
-    toGameCoordinate(offset) {
+    toGameCoordinate() {
+        let offset = Engine.getOffset();
         return new GameCoordinate(this.x - offset.x, this.y - offset.y);
     }
 }

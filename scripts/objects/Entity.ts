@@ -1,4 +1,5 @@
 import { Engine } from "../engine/Engine.js";
+import { Draw } from "../utils/Draw.js";
 import { Vector } from "../utils/Vector.js";
 
 export class Entity{
@@ -16,6 +17,6 @@ export class Entity{
     }
 
     render(){
-        Engine.getInstance().DRAW.Circle(this.position, this.size, this.color);
+        Draw.Circle(this.position, this.size, this.color);
     }
 }

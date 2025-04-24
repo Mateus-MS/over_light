@@ -1,7 +1,14 @@
 import { Draw } from "../utils/Draw.js";
 import { Mouse } from "../utils/Mouse.js";
 import { Vector } from "../utils/Vector.js";
+import { ScreenCoordinate } from "./type/Coordinates.js";
 export class Engine {
+    static setOffset(offset) {
+        Engine.offset = offset;
+    }
+    static getOffset() {
+        return Engine.offset;
+    }
     constructor() {
         this.updateLoopInterval = null;
         this.c = null;
@@ -16,7 +23,7 @@ export class Engine {
         this.lastFPS = 0;
         this.canvas = this.initCanvas();
         this.c = this.canvas.getContext("2d");
-        this.DRAW = Draw.getInstance(this.c);
+        Draw.setContext(this.c);
         this.SCREEN_SIZE.calcHalf();
     }
     static getInstance() {
@@ -65,7 +72,7 @@ export class Engine {
         }
         (_a = this.c) === null || _a === void 0 ? void 0 : _a.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.showFPS) {
-            this.DRAW.Text({
+            Draw.Text({
                 text: `FPS: ${this.lastFPS}`,
                 position: this.fpsDisplayPosition,
                 fill: {
@@ -80,3 +87,4 @@ export class Engine {
     }
 }
 Engine.instance = null;
+Engine.offset = new ScreenCoordinate(0, 0);
