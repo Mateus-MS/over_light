@@ -3,7 +3,7 @@ import { Engine } from "../engine/Engine.js";
 import { GameCoordinate, GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
 import { NumberHalf } from "../engine/type/utils.js";
 import { Draw } from "../utils/Draw.js";
-import { MouseState } from "../utils/Mouse.js";
+import { Mouse, MouseState } from "../utils/Mouse.js";
 import { Vector } from "../utils/Vector.js";
 
 // TODO: Add the selecting logic to the grid map
@@ -38,7 +38,7 @@ export class GridMap{
     }
 
     private initiateListeners(): void{
-        let mouse = Engine.getInstance().MOUSE;
+        let mouse = Mouse.getInstance();
 
         mouse.addEvent("mousedown", (event: MouseEvent) => {
             // If the mouse stay stopped for less than 20ms we consider it a click
@@ -67,7 +67,7 @@ export class GridMap{
 
         mouse.addEvent("mousemove", (event: MouseEvent) => {
             // Try to get the hovered cell position
-            this.hoveredCell = Engine.getInstance().MOUSE.position.toGridCoordinate(this.size);
+            this.hoveredCell = Mouse.getInstance().position.toGridCoordinate(this.size);
 
             // Try to get the action of the mouse
             if(mouse.clickTime !== undefined){
@@ -188,6 +188,7 @@ export class GridMap{
 
     private renderDebug(): void{
         let engine = Engine.getInstance();
+        let mouse = Mouse.getInstance();
 
         // Draw the mouse position in different coordinate formats to test if the conversion is working.
         Draw.Text({
@@ -201,7 +202,7 @@ export class GridMap{
 
         // Draw the mouse state.
         let mouseState: string;
-        switch (engine.MOUSE.state){
+        switch (mouse.state){
             case MouseState.Idle:
                 mouseState = "Idle";
                 break;
@@ -224,7 +225,7 @@ export class GridMap{
         })
 
         // Draw the grid coordinate
-        let gridCoordinate = engine.MOUSE.position.toGridCoordinate(this.size);        
+        let gridCoordinate = mouse.position.toGridCoordinate(this.size);        
         Draw.Text({
             text: `Grid coordinate: ${gridCoordinate?.x}, ${gridCoordinate?.y}`,
             position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 60),
@@ -236,7 +237,7 @@ export class GridMap{
 
         // Draw the game coordinate
         if(engine.SCREEN_SIZE.half === undefined) throw new Error("Screen half size is not defined.");
-        let gameCoordinate = engine.MOUSE.position.toGameCoordinate();
+        let gameCoordinate = mouse.position.toGameCoordinate();
 
         Draw.Text({
             text: `Game coordinate: ${gameCoordinate?.x}, ${gameCoordinate?.y}`,
@@ -248,7 +249,7 @@ export class GridMap{
         })
 
         // Draw the screen coordinate
-        let screenCoordinate = engine.MOUSE.position;
+        let screenCoordinate = mouse.position;
         Draw.Text({
             text: `Screen coordinate: ${screenCoordinate?.x}, ${screenCoordinate?.y}`,
             position: new GameCoordinate(22, engine.SCREEN_SIZE.y - 20),

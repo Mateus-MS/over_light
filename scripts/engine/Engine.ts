@@ -13,7 +13,6 @@ export class Engine {
     private c: CanvasRenderingContext2D | null = null;
 
     public ENTITIES: Entity[] = [];
-    public MOUSE: Mouse = Mouse.getInstance();
 
     public readonly frameRate: number = 60;
     public readonly SCREEN_SIZE: Vector = new Vector(window.innerWidth, window.innerHeight);

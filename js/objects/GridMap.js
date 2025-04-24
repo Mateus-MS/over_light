@@ -3,7 +3,7 @@ import { Engine } from "../engine/Engine.js";
 import { GameCoordinate, GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
 import { NumberHalf } from "../engine/type/utils.js";
 import { Draw } from "../utils/Draw.js";
-import { MouseState } from "../utils/Mouse.js";
+import { Mouse, MouseState } from "../utils/Mouse.js";
 import { Vector } from "../utils/Vector.js";
 export class GridMap {
     constructor(dimensions, size = 20) {
@@ -14,7 +14,7 @@ export class GridMap {
         this.initiateListeners();
     }
     initiateListeners() {
-        let mouse = Engine.getInstance().MOUSE;
+        let mouse = Mouse.getInstance();
         mouse.addEvent("mousedown", (event) => {
             mouse.state = MouseState.Idle;
             if (mouse.clickTime === undefined) {
@@ -29,7 +29,7 @@ export class GridMap {
             mouse.state = MouseState.Idle;
         });
         mouse.addEvent("mousemove", (event) => {
-            this.hoveredCell = Engine.getInstance().MOUSE.position.toGridCoordinate(this.size);
+            this.hoveredCell = Mouse.getInstance().position.toGridCoordinate(this.size);
             if (mouse.clickTime !== undefined) {
                 let time = Date.now() - mouse.clickTime;
                 if (time < 10) {
@@ -108,6 +108,7 @@ export class GridMap {
     }
     renderDebug() {
         let engine = Engine.getInstance();
+        let mouse = Mouse.getInstance();
         Draw.Text({
             text: "Mouse positions: ",
             position: new ScreenCoordinate(15, engine.SCREEN_SIZE.y - 103),
@@ -117,7 +118,7 @@ export class GridMap {
             fontSize: 19
         });
         let mouseState;
-        switch (engine.MOUSE.state) {
+        switch (mouse.state) {
             case MouseState.Idle:
                 mouseState = "Idle";
                 break;
@@ -138,7 +139,7 @@ export class GridMap {
             font: "Arial",
             fontSize: 15
         });
-        let gridCoordinate = engine.MOUSE.position.toGridCoordinate(this.size);
+        let gridCoordinate = mouse.position.toGridCoordinate(this.size);
         Draw.Text({
             text: `Grid coordinate: ${gridCoordinate === null || gridCoordinate === void 0 ? void 0 : gridCoordinate.x}, ${gridCoordinate === null || gridCoordinate === void 0 ? void 0 : gridCoordinate.y}`,
             position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 60),
@@ -149,7 +150,7 @@ export class GridMap {
         });
         if (engine.SCREEN_SIZE.half === undefined)
             throw new Error("Screen half size is not defined.");
-        let gameCoordinate = engine.MOUSE.position.toGameCoordinate();
+        let gameCoordinate = mouse.position.toGameCoordinate();
         Draw.Text({
             text: `Game coordinate: ${gameCoordinate === null || gameCoordinate === void 0 ? void 0 : gameCoordinate.x}, ${gameCoordinate === null || gameCoordinate === void 0 ? void 0 : gameCoordinate.y}`,
             position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 40),
@@ -158,7 +159,7 @@ export class GridMap {
             font: "Arial",
             fontSize: 15
         });
-        let screenCoordinate = engine.MOUSE.position;
+        let screenCoordinate = mouse.position;
         Draw.Text({
             text: `Screen coordinate: ${screenCoordinate === null || screenCoordinate === void 0 ? void 0 : screenCoordinate.x}, ${screenCoordinate === null || screenCoordinate === void 0 ? void 0 : screenCoordinate.y}`,
             position: new GameCoordinate(22, engine.SCREEN_SIZE.y - 20),

@@ -1,5 +1,4 @@
 import { Draw } from "../utils/Draw.js";
-import { Mouse } from "../utils/Mouse.js";
 import { Vector } from "../utils/Vector.js";
 import { ScreenCoordinate } from "./type/Coordinates.js";
 export class Engine {
@@ -13,7 +12,6 @@ export class Engine {
         this.updateLoopInterval = null;
         this.c = null;
         this.ENTITIES = [];
-        this.MOUSE = Mouse.getInstance();
         this.frameRate = 60;
         this.SCREEN_SIZE = new Vector(window.innerWidth, window.innerHeight);
         this.showFPS = true;
