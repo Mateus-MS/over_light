@@ -118,10 +118,7 @@ export class GridMap{
 
         // Calculate how many cells fits on half of screen on each axis.
         // TODO: This should be calculated only once, or after zooming, not every frame.
-        let quantityOfCellsThatFitOnAxis = new Vector(
-            Math.ceil(engine.SCREEN_SIZE.half.x / this.size.number),
-            Math.ceil(engine.SCREEN_SIZE.half.y / this.size.number)
-        );
+        let quantityOfCellsThatFitOnAxis = engine.SCREEN_SIZE.half.divide(this.size.number).ceil();
 
         let x: Vector = new Vector(0, 0);
         let y: Vector = new Vector(0, 0);
@@ -155,7 +152,7 @@ export class GridMap{
                             color: "transparent"
                         },
                         stroke: {
-                            color: "black",
+                            color: "gray",
                             width: 2
                         }
                     }, 
@@ -252,7 +249,7 @@ export class GridMap{
         let screenCoordinate = mouse.position;
         Draw.Text({
             text: `Screen coordinate: ${screenCoordinate?.x}, ${screenCoordinate?.y}`,
-            position: new GameCoordinate(22, engine.SCREEN_SIZE.y - 20),
+            position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 20),
             fill: { color: "black" },
             aligment: "left",
             font: "Arial",

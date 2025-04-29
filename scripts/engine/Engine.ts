@@ -1,6 +1,6 @@
-import { Entity } from "../objects/Entity.js";
+import { IsRenderable } from "../objects/entity/components/render.js";
+import { Entity } from "../objects/entity/Entity.js";
 import { Draw } from "../utils/Draw.js";
-import { Mouse } from "../utils/Mouse.js";
 import { Vector } from "../utils/Vector.js";
 import { ScreenCoordinate } from "./type/Coordinates.js";
 
@@ -131,5 +131,15 @@ export class Engine {
         }
 
         this.Update();
+    
+        //Entities logic
+        for(let i = 0; i < this.ENTITIES.length; i++){
+            this.ENTITIES[i].update();
+            // This if statement is not even necessary, i'll keep it just for readability.
+            if(IsRenderable(this.ENTITIES[i])){
+                this.ENTITIES[i].render!();
+            }
+        }
+    
     }
 }

@@ -1,2 +1,2 @@
-import { TestScene } from "./engine/scenes/testScene.js";
+import { TestScene } from "./scenes/testScene.js";
 const SCENE = new TestScene();

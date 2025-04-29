@@ -61,7 +61,21 @@ export class GameCoordinate extends Vector{
         super(x, y);
     }
 
-    public toScreenCoordinate(screenSize: Vector): ScreenCoordinate{
-        return new ScreenCoordinate(this.x + screenSize.x, this.y + screenSize.y);
+    public toScreenCoordinate(): ScreenCoordinate{
+        let offset = Engine.getOffset();
+        return new ScreenCoordinate(this.x + offset.x, this.y + offset.y);
+    }
+}
+
+export class Coordinates{
+    public static ScreenCoordinateToGameCoordinate(vector: Vector): GameCoordinate{
+        let offset = Engine.getOffset();
+
+        return new GameCoordinate(vector.x - offset.x, vector.y - offset.y);   
+    }
+
+    public static GameCoordinateToScreenCoordinate(vector: Vector): ScreenCoordinate{
+        let offset = Engine.getOffset();
+        return new ScreenCoordinate(vector.x + offset.x, vector.y + offset.y);
     }
 }

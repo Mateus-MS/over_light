@@ -1,5 +1,5 @@
 import { Engine } from "../engine/Engine.js";
-import { GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
+import { GameCoordinate, GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
 import { NumberHalf } from "../engine/type/utils.js";
 import { Vector } from "../utils/Vector.js";
 
@@ -12,7 +12,7 @@ interface stroke{
     width: number;
 }
 
-export interface TextI{
+interface TextI{
     // Text
     text: string;
     
@@ -29,12 +29,27 @@ export interface TextI{
     fontSize?: number;
 }
 
-export interface SquareI{
+interface SquareI{
     position: Vector;
     size: number;
 
     fill: fill;
     stroke?: stroke;
+}
+
+interface CircleI{
+    position: GameCoordinate;
+    size: number;
+
+    fill: fill;
+    stroke?: stroke;
+}
+
+interface LineI{
+    start: Vector;
+    end: Vector;
+
+    stroke: stroke;
 }
 
 export class Draw{
@@ -65,27 +80,35 @@ export class Draw{
 
         if(!Draw.c) return;
 
+        let position: ScreenCoordinate = text.position as ScreenCoordinate;
+
+        if(text.position instanceof GameCoordinate){
+            position = text.position.toScreenCoordinate();
+        }
+
         Draw.c.font = `${text.fontSize}px ${text.font}`;
         Draw.c.fillStyle = text.fill.color;
         Draw.c.textAlign = text.aligment === undefined ? "left" : text.aligment;
-        Draw.c.fillText(text.text, text.position.x, text.position.y);
+        Draw.c.fillText(text.text, position.x, position.y);
 
         if(text.stroke){
             Draw.c.strokeStyle = text.stroke.color;
             Draw.c.lineWidth = text.stroke.width;
-            Draw.c.strokeText(text.text, text.position.x, text.position.y);
+            Draw.c.strokeText(text.text, position.x, position.y);
         }
 
         Draw.c?.closePath();
     }
 
-    public static Circle(position: Vector, radius: number, color: string = "black"){
+    public static Circle(circle: CircleI){
         Draw.c?.beginPath();
 
         if(!Draw.c) return;
 
-        Draw.c.fillStyle = color;
-        Draw.c.arc(position.x, position.y, radius, 0, Math.PI * 2);
+        let pos = circle.position.toScreenCoordinate();
+
+        Draw.c.fillStyle = circle.fill.color;
+        Draw.c.arc(pos.x, pos.y, circle.size, 0, Math.PI * 2);
         Draw.c.fill();
 
         Draw.c.closePath();
@@ -140,4 +163,29 @@ export class Draw{
         Draw.c.closePath();
     }
 
+    public static Line(line: LineI){
+        Draw.c?.beginPath();
+
+        if(!Draw.c) return;
+
+        Draw.c.strokeStyle = line.stroke.color;
+        Draw.c.lineWidth = line.stroke.width;
+
+        let start = line.start as ScreenCoordinate;
+        let end = line.end as ScreenCoordinate;
+
+        if(line.start instanceof GameCoordinate){
+            start = line.start.toScreenCoordinate();
+        }
+
+        if(line.end instanceof GameCoordinate){
+            end = line.end.toScreenCoordinate();
+        }
+
+        Draw.c.moveTo(start.x, start.y);
+        Draw.c.lineTo(end.x, end.y);
+
+        Draw.c.stroke();
+        Draw.c.closePath();
+    }
 }

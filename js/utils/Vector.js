@@ -110,6 +110,31 @@ export class Vector {
         }
         throw new Error("Invalid type for multiplyion. Expected Vector or number.");
     }
+    getMagnitude() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+    setMagnitude(magnitude) {
+        return this.normalize().multiply(magnitude);
+    }
+    normalize() {
+        let mag = this.getMagnitude();
+        if (mag === 0) {
+            return new Vector(0, 0);
+        }
+        return this.divide(mag);
+    }
+    limit(max) {
+        let mag = this.getMagnitude();
+        if (mag > max) {
+            return this.setMagnitude(max);
+        }
+        return this.copy();
+    }
+    ceil() {
+        let x = Math.ceil(this.x);
+        let y = Math.ceil(this.y);
+        return new Vector(x, y);
+    }
     copy() {
         let vec = new Vector(this.x, this.y);
         if (this.half) {

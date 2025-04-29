@@ -1,11 +1,12 @@
-import { GridMap } from "../../objects/GridMap.js";
-import { Vector } from "../../utils/Vector.js";
-import { Engine } from "../Engine.js";
-import { GameCoordinate, GridCoordinate, ScreenCoordinate } from "../type/Coordinates.js";
-import { Scene } from "./Scene.js";
+import { Entity } from "../objects/entity/Entity.js";
+import { GridMap } from "../objects/GridMap.js";
+import { Engine } from "../engine/Engine.js";
+import { GameCoordinate, GridCoordinate } from "../engine/type/Coordinates.js";
+import { Scene } from "../engine/Scene.js";
+import { Player } from "../objects/Player.js";
 
 export class TestScene extends Scene {
-    private gridMap: GridMap = new GridMap(new GridCoordinate(10, 10), 50);
+    private gridMap: GridMap = new GridMap(new GridCoordinate(6, 6), 50);
 
     constructor() {
         super();
@@ -23,6 +24,8 @@ export class TestScene extends Scene {
     public override Start() {
         // When having multiple scenes this will cause a bug.
         Engine.setOffset(this.offset);
+
+        new Player(new GameCoordinate(20, 20)); 
     }
 
     public override Update() {

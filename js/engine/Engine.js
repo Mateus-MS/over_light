@@ -1,3 +1,4 @@
+import { IsRenderable } from "../objects/entity/components/render.js";
 import { Draw } from "../utils/Draw.js";
 import { Vector } from "../utils/Vector.js";
 import { ScreenCoordinate } from "./type/Coordinates.js";
@@ -82,6 +83,12 @@ export class Engine {
             });
         }
         this.Update();
+        for (let i = 0; i < this.ENTITIES.length; i++) {
+            this.ENTITIES[i].update();
+            if (IsRenderable(this.ENTITIES[i])) {
+                this.ENTITIES[i].render();
+            }
+        }
     }
 }
 Engine.instance = null;

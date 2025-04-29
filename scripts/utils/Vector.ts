@@ -23,6 +23,8 @@ export class Vector{
         this.half = new Vector(this.x / 2, this.y / 2);
     }
 
+    // Basic operations.
+
     add(vector: Vector): Vector;
     add(number: number): Vector;
     add(object: Vector | number): Vector{
@@ -115,8 +117,8 @@ export class Vector{
         throw new Error("Invalid type for multiplyion. Expected Vector or number.");
     }
 
-    divide(vector: Vector, storeHalf: boolean): Vector;
-    divide(number: number, storeHalf: boolean): Vector;
+    divide(vector: Vector, storeHalf?: boolean): Vector;
+    divide(number: number, storeHalf?: boolean): Vector;
     divide(object: Vector | number, storeHalf: boolean = false): Vector{
         // If the object is a vector or something that extends a vector
         if(object instanceof Vector){
@@ -160,6 +162,41 @@ export class Vector{
         }
 
         throw new Error("Invalid type for multiplyion. Expected Vector or number.");
+    }
+
+    // Vector operations.
+
+    public getMagnitude(): number{
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    public setMagnitude(magnitude: number): Vector{
+        return this.normalize().multiply(magnitude);
+    }
+
+    public normalize(): Vector{
+        let mag = this.getMagnitude();
+        // Avoid division by zero.
+        if(mag === 0){
+            return new Vector(0, 0);
+        }
+        return this.divide(mag);
+    }
+
+    public limit(max: number): Vector{
+        let mag = this.getMagnitude();
+        if(mag > max){
+            return this.setMagnitude(max);
+        }
+        return this.copy();
+    }
+
+    // Utility functions.
+
+    public ceil(): Vector{
+        let x = Math.ceil(this.x);
+        let y = Math.ceil(this.y);
+        return new Vector(x, y);
     }
 
     public copy<ReturnType extends Vector>(): ReturnType{

@@ -1,6 +1,6 @@
 import { Collisions } from "../engine/Collisions.js";
 import { Engine } from "../engine/Engine.js";
-import { GameCoordinate, GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
+import { GridCoordinate, ScreenCoordinate } from "../engine/type/Coordinates.js";
 import { NumberHalf } from "../engine/type/utils.js";
 import { Draw } from "../utils/Draw.js";
 import { Mouse, MouseState } from "../utils/Mouse.js";
@@ -63,7 +63,7 @@ export class GridMap {
             throw new Error("Grid dimensions half is not defined.");
         let centerAsScreenCoordinate = new ScreenCoordinate(engine.SCREEN_SIZE.half.x, engine.SCREEN_SIZE.half.y);
         let cellOnCenterOfScreen = centerAsScreenCoordinate.toGridCoordinate(this.size);
-        let quantityOfCellsThatFitOnAxis = new Vector(Math.ceil(engine.SCREEN_SIZE.half.x / this.size.number), Math.ceil(engine.SCREEN_SIZE.half.y / this.size.number));
+        let quantityOfCellsThatFitOnAxis = engine.SCREEN_SIZE.half.divide(this.size.number).ceil();
         let x = new Vector(0, 0);
         let y = new Vector(0, 0);
         if (quantityOfCellsThatFitOnAxis.x < this.dimensions.half.x) {
@@ -87,7 +87,7 @@ export class GridMap {
                         color: "transparent"
                     },
                     stroke: {
-                        color: "black",
+                        color: "gray",
                         width: 2
                     }
                 }, this.size, true);
@@ -162,7 +162,7 @@ export class GridMap {
         let screenCoordinate = mouse.position;
         Draw.Text({
             text: `Screen coordinate: ${screenCoordinate === null || screenCoordinate === void 0 ? void 0 : screenCoordinate.x}, ${screenCoordinate === null || screenCoordinate === void 0 ? void 0 : screenCoordinate.y}`,
-            position: new GameCoordinate(22, engine.SCREEN_SIZE.y - 20),
+            position: new ScreenCoordinate(22, engine.SCREEN_SIZE.y - 20),
             fill: { color: "black" },
             aligment: "left",
             font: "Arial",

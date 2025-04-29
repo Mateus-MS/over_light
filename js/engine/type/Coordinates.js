@@ -25,7 +25,18 @@ export class GameCoordinate extends Vector {
     constructor(x, y) {
         super(x, y);
     }
-    toScreenCoordinate(screenSize) {
-        return new ScreenCoordinate(this.x + screenSize.x, this.y + screenSize.y);
+    toScreenCoordinate() {
+        let offset = Engine.getOffset();
+        return new ScreenCoordinate(this.x + offset.x, this.y + offset.y);
+    }
+}
+export class Coordinates {
+    static ScreenCoordinateToGameCoordinate(vector) {
+        let offset = Engine.getOffset();
+        return new GameCoordinate(vector.x - offset.x, vector.y - offset.y);
+    }
+    static GameCoordinateToScreenCoordinate(vector) {
+        let offset = Engine.getOffset();
+        return new ScreenCoordinate(vector.x + offset.x, vector.y + offset.y);
     }
 }

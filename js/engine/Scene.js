@@ -1,15 +1,13 @@
-import { Entity } from "../objects/Entity.js";
-import { Vector } from "../utils/Vector.js";
 import { Engine } from "./Engine.js";
+import { ScreenCoordinate } from "./type/Coordinates.js";
 export class Scene {
     constructor() {
         this.engine = Engine.getInstance();
+        this.offset = new ScreenCoordinate(0, 0);
         this.engine.StartEngine(this.Start, this.Update, this);
-        this.player = new Entity(new Vector(50, 50), 20, "blue");
     }
-    Start() {
-    }
-    Update() {
-        this.engine.DRAW.Circle(new Vector(100, 100), 20, "red");
-    }
+    Start() { }
+    ;
+    Update() { }
+    ;
 }
