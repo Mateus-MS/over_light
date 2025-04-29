@@ -1,4 +1,3 @@
-import { Actor } from "../objects/entity/Actor.js";
 import { Entity } from "../objects/entity/Entity.js";
 import { Draw } from "../utils/Draw.js";
 import { Vector } from "../utils/Vector.js";
@@ -108,12 +107,7 @@ export class Engine {
     
         //Entities logic
         for(let i = 0; i < this.ENTITIES.length; i++){
-            this.ENTITIES[i].update();
-            this.ENTITIES[i].render();
-
-            if(this.ENTITIES[i] instanceof Actor){
-                (this.ENTITIES[i] as Actor).move();
-            }
+            this.ENTITIES[i].update!();
         }
     
     }
