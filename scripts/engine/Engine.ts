@@ -1,4 +1,4 @@
-import { IsRenderable } from "../objects/entity/components/render.js";
+import { Actor } from "../objects/entity/Actor.js";
 import { Entity } from "../objects/entity/Entity.js";
 import { Draw } from "../utils/Draw.js";
 import { Vector } from "../utils/Vector.js";
@@ -100,46 +100,50 @@ export class Engine {
      * Responsible for the logic off counting the FPS then showing it.
      */
     private updateLoop(){
-        if(this.lastSecond === undefined){
-            this.lastSecond = new Date().getSeconds();
-        }
-
-        let currentSecond = new Date().getSeconds();
-
-        if(currentSecond - this.lastSecond >= 1 ){
-            this.lastSecond = currentSecond;
-            this.lastFPS = this.frameCount;
-            this.frameCount = 0;
-        } else {
-            this.frameCount++;
-        }
-
         // Clear the canvas
-        this.c?.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        if(this.showFPS){
-            Draw.Text({
-                text: `FPS: ${this.lastFPS}`,
-                position: this.fpsDisplayPosition,
-                fill: { 
-                    color: "black" 
-                },
-                aligment: "left",
-                font: "Arial",
-                fontSize: 25
-            });
-        }
+        this.c?.clearRect(0, 0, this.canvas.width, this.canvas.height);       
+        countAndDrawFPS(this.showFPS, this.lastSecond, this.frameCount, this.lastFPS, this.fpsDisplayPosition);
 
         this.Update();
     
         //Entities logic
         for(let i = 0; i < this.ENTITIES.length; i++){
             this.ENTITIES[i].update();
-            // This if statement is not even necessary, i'll keep it just for readability.
-            if(IsRenderable(this.ENTITIES[i])){
-                this.ENTITIES[i].render!();
+            this.ENTITIES[i].render();
+
+            if(this.ENTITIES[i] instanceof Actor){
+                (this.ENTITIES[i] as Actor).move();
             }
         }
     
+    }
+}
+
+function countAndDrawFPS(showFPS: boolean, lastSecond: number | undefined, frameCount: number, lastFPS: number, fpsDisplayPosition: Vector){ 
+    if(lastSecond === undefined){
+        lastSecond = new Date().getSeconds();
+    }
+
+    let currentSecond = new Date().getSeconds();
+
+    if(currentSecond - lastSecond >= 1 ){
+        lastSecond = currentSecond;
+        lastFPS = frameCount;
+        frameCount = 0;
+    } else {
+        frameCount++;
+    }
+
+    if(showFPS){
+        Draw.Text({
+            text: `FPS: ${lastFPS}`,
+            position: fpsDisplayPosition,
+            fill: { 
+                color: "black" 
+            },
+            aligment: "left",
+            font: "Arial",
+            fontSize: 25
+        });
     }
 }
